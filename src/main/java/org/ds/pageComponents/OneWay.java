@@ -6,6 +6,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
+import java.util.Map;
+
 public class OneWay extends AbstractComponents implements SearchFlightAvail {
 
     private By oneWayRdoByCss = By.cssSelector("input[value='OneWay']");
@@ -21,12 +23,12 @@ public class OneWay extends AbstractComponents implements SearchFlightAvail {
     }
 
     @Override
-    public void checkAvailability(String source, String destination) {
+    public void checkAvailability(Map<String, String> travelData) {
        Assert.assertTrue(findElement(oneWayRdoByCss).isSelected());
-       findElement(fromById).click();
-       findElement(getOriginPathByCssSelector(source)).click();
-       findElement(toById).click();
-       findElement(getDestinationPathByCssSelector(destination)).click();
+       By originByCssSelector = getOriginPathByCssSelector(travelData.get("source"));
+       By destinationByCssSelector = getDestinationPathByCssSelector(travelData.get("destination"));
+       executeWaitMethod(setup -> setup.selectSourceCity(fromById, originByCssSelector), originByCssSelector);
+       executeWaitMethod(t -> t.selectDestinationCity(toById, destinationByCssSelector), destinationByCssSelector);
        findElement(studentRdoButtonById).click();
        findElement(submitByCssSelector).click();
     }

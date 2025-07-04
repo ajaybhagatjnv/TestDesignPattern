@@ -5,6 +5,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DemoTest {
     WebDriver driver;
@@ -24,11 +26,11 @@ public class DemoTest {
 
         System.out.println(homePage.getNavigationBar().getText());
         System.out.println("links count : "+ homePage.getNavigationBar().getLinksCount());
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
-        homePage.setJourneyType(TypeOfJourney.OneWay).checkAvailability("DEL", "BLR");
-        homePage.setJourneyType(TypeOfJourney.RoundTrip).checkAvailability("DEL", "BLR");
-        homePage.setJourneyType(TypeOfJourney.MultiTrip).checkAvailability("DEL", "BLR");
+        homePage.setJourneyType(TypeOfJourney.OneWay).checkAvailability(Map.of("source", "DEL", "destination", "BLR"));
+        homePage.setJourneyType(TypeOfJourney.RoundTrip).checkAvailability(Map.of("source", "DEL", "destination", "BLR"));
+        homePage.setJourneyType(TypeOfJourney.MultiTrip).checkAvailability(Map.of("source", "DEL", "destination", "BLR", "source2", "BOM", "destination2", "PAT"));
 
     }
     @AfterClass

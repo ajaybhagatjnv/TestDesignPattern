@@ -6,6 +6,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
+import java.util.Map;
+import java.util.function.Consumer;
+
 public class MultiTrip extends AbstractComponents implements SearchFlightAvail {
 
     private By multiTripRdoByCss = By.cssSelector("input[value='TripPlanner']");
@@ -27,22 +30,25 @@ public class MultiTrip extends AbstractComponents implements SearchFlightAvail {
     }
 
     @Override
-    public void checkAvailability(String source, String destination) {
-        findElement(multiTripRdoByCss).click();
-        findElement(multiCityModelAlertById).click();
-        Assert.assertTrue(findElement(multiTripRdoByCss).isSelected());
+    public void checkAvailability(Map<String, String> travelData) {
 
-        findElement(fromById).click();
-        findElement(getOriginPathByCssSelector(source)).click();
-        findElement(toById).click();
-        findElement(getDestinationPathByCssSelector(destination)).click();
-
-        findElement(fromById2).click();
-        findElement(getOriginPathByCssSelector2(destination)).click();
-        findElement(toById2).click();
-        findElement(getDestinationPathByCssSelector2(source)).click();
+        prepareSetup(t -> t.executeWaitMethod(setup -> setup.selectSourceCity(fromById, getOriginPathByCssSelector(travelData.get("source"))), getOriginPathByCssSelector(travelData.get("source"))));
+        executeWaitMethod(t -> t.selectDestinationCity(toById, getDestinationPathByCssSelector(travelData.get("destination"))), getDestinationPathByCssSelector(travelData.get("destination")));
+        executeWaitMethod(t -> t.selectSourceCity(fromById2, getOriginPathByCssSelector2(travelData.get("source2"))), getOriginPathByCssSelector2(travelData.get("source2")));
+        executeWaitMethod(t -> t.selectDestinationCity(toById2, getDestinationPathByCssSelector2(travelData.get("destination2"))), getDestinationPathByCssSelector2(travelData.get("destination2")));
 
         findElement(studentRdoButtonById).click();
         findElement(submitByCssSelector).click();
+    }
+
+    public void prepareSetup(Consumer<MultiTrip> consumer){
+        System.out.println("prepareSetup starts ....");
+
+        findElement(multiTripRdoByCss).click();
+        findElement(multiCityModelAlertById).click();
+        Assert.assertTrue(findElement(multiTripRdoByCss).isSelected());
+        consumer.accept(MultiTrip.this);
+
+        System.out.println("prepareSetup is completed ....");
     }
 }

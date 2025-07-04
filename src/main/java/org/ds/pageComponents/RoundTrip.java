@@ -6,6 +6,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
+import java.util.Map;
+
 public class RoundTrip extends AbstractComponents implements SearchFlightAvail {
 
     private By roundTripRdoByCss = By.cssSelector("input[value='RoundTrip']");
@@ -20,14 +22,19 @@ public class RoundTrip extends AbstractComponents implements SearchFlightAvail {
         super(driver, flightBookingById);
     }
     @Override
-    public void checkAvailability(String source, String destination) {
+    public void checkAvailability(Map<String, String> travelData) {
         findElement(roundTripRdoByCss).click();
         Assert.assertTrue(findElement(roundTripRdoByCss).isSelected());
-        findElement(fromById).click();
-        findElement(getOriginPathByCssSelector(source)).click();
-        findElement(toById).click();
-        findElement(getDestinationPathByCssSelector(destination)).click();
+
+        By originByCssSelector = getOriginPathByCssSelector(travelData.get("source"));
+        By destinationByCssSelector = getDestinationPathByCssSelector(travelData.get("destination"));
+
+        // Execute around strategy
+        executeWaitMethod(setup -> setup.selectSourceCity(fromById, originByCssSelector), originByCssSelector);
+        executeWaitMethod(t -> t.selectDestinationCity(toById, destinationByCssSelector), destinationByCssSelector);
+
         findElement(studentRdoButtonById).click();
         findElement(submitByCssSelector).click();
     }
+
 }
